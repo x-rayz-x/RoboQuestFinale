@@ -72,9 +72,9 @@ function CourseViewer({ course, onBack }: CourseViewerProps) {
 
 
   const difficultyColors = {
-    beginner: 'bg-green-100 text-green-800',
-    intermediate: 'bg-yellow-100 text-yellow-800',
-    advanced: 'bg-red-100 text-red-800'
+    beginner: 'bg-green-100 text-green-800 dark:bg-green-950 dark:text-green-200',
+    intermediate: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-950 dark:text-yellow-200',
+    advanced: 'bg-red-100 text-red-800 dark:bg-red-950 dark:text-red-200'
   };
 
   const categoryEmojis: { [key: string]: string } = {
@@ -85,7 +85,7 @@ function CourseViewer({ course, onBack }: CourseViewerProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 p-6">
+    <div className="min-h-screen bg-background p-6">
       <div className="max-w-4xl mx-auto">
         <Button onClick={onBack} variant="outline" className="mb-6">
           ← Back to Courses

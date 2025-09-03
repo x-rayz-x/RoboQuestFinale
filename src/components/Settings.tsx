@@ -6,8 +6,11 @@ import { Label } from './ui/label';
 import { Switch } from './ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { useAuth } from './AuthProvider';
+import { useTranslation } from '../i18n/LanguageContext';
+import { languageNames } from '../i18n/translations';
 import { projectId } from '../utils/supabase/info';
 import { useProgress } from '../hooks/useProgress';
+import { useTheme } from '../hooks/useTheme';
 import { 
   User, 
   Settings as SettingsIcon, 
@@ -23,20 +26,21 @@ import {
 export function Settings() {
   const { user, session, signOut, refreshSession } = useAuth();
   const { progress, settings, loading, error, refetch } = useProgress();
+  const { language, setLanguage, t } = useTranslation();
+  const { applyTheme } = useTheme();
   const [saved, setSaved] = useState(false);
   const [formData, setFormData] = useState({
     firstName: (user as any)?.user_metadata?.firstName || '',
     lastName: (user as any)?.user_metadata?.lastName || '',
     email: user?.email || '',
     parentEmail: (user as any)?.user_metadata?.parentEmail || '',
-    language: settings?.language || 'en',
+    language: language,
     theme: settings?.theme || 'light',
     soundEffects: settings?.soundEffects ?? true,
     backgroundMusic: settings?.backgroundMusic ?? false,
     notifications: settings?.notifications ?? true,
     emailUpdates: settings?.emailUpdates ?? false,
-    parentalNotifications: settings?.parentalNotifications ?? true,
-    dailyGoal: progress?.dailyGoal || 2
+    parentalNotifications: settings?.parentalNotifications ?? true
   });
 
   // Sync local formData when backend data is fetched
@@ -47,38 +51,45 @@ export function Settings() {
       lastName: (user as any)?.user_metadata?.lastName || '',
       email: user?.email || '',
       parentEmail: (user as any)?.user_metadata?.parentEmail || '',
-      language: settings?.language || 'en',
+      language: language,
       theme: settings?.theme || 'light',
       soundEffects: settings?.soundEffects ?? true,
       backgroundMusic: settings?.backgroundMusic ?? false,
       notifications: settings?.notifications ?? true,
       emailUpdates: settings?.emailUpdates ?? false,
-      parentalNotifications: settings?.parentalNotifications ?? true,
-      dailyGoal: progress?.dailyGoal || 2
+      parentalNotifications: settings?.parentalNotifications ?? true
     }));
-    if (settings?.theme) applyTheme(settings.theme);
-    if (settings?.language) document.documentElement.lang = settings.language;
-  }, [user?.id, (user as any)?.user_metadata, settings?.language, settings?.theme, progress?.dailyGoal]);
-
-  const applyTheme = (theme: string) => {
-    if (theme === 'dark') {
-      document.documentElement.classList.add('dark');
-    } else if (theme === 'light') {
-      document.documentElement.classList.remove('dark');
-    } else {
-      const darkMq = window.matchMedia('(prefers-color-scheme: dark)');
-      if (darkMq.matches) document.documentElement.classList.add('dark');
-      else document.documentElement.classList.remove('dark');
+    
+    // Apply theme from settings if available
+    if (settings?.theme) {
+      applyTheme(settings.theme as 'light' | 'dark' | 'auto');
     }
-  };
+  }, [user?.id, (user as any)?.user_metadata, language, settings?.theme]);
+
+  // Apply theme on component mount and when settings change
+  React.useEffect(() => {
+    // First check if user has a saved theme preference
+    const userTheme = localStorage.getItem('userTheme');
+    if (userTheme) {
+      applyTheme(userTheme);
+    } else {
+      // Fallback to general theme preference
+      const savedTheme = localStorage.getItem('theme');
+      if (savedTheme) {
+        applyTheme(savedTheme);
+      }
+    }
+  }, []);
+
+
 
   const handleInputChange = (field: string, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }));
     if (field === 'theme') {
-      applyTheme(value);
+      applyTheme(value as 'light' | 'dark' | 'auto');
     }
     if (field === 'language') {
-      document.documentElement.lang = value;
+      setLanguage(value);
     }
   };
 
@@ -113,10 +124,15 @@ export function Settings() {
             backgroundMusic: formData.backgroundMusic,
             notifications: formData.notifications,
             emailUpdates: formData.emailUpdates,
-            parentalNotifications: formData.parentalNotifications,
-            dailyGoal: formData.dailyGoal
+            parentalNotifications: formData.parentalNotifications
           })
         });
+
+        // Apply theme immediately after saving
+        if (formData.theme) {
+          applyTheme(formData.theme as 'light' | 'dark' | 'auto');
+        }
+        
         // Refresh auth to reflect new user metadata and refetch settings/progress
         await refreshSession();
         await refetch();
@@ -131,26 +147,26 @@ export function Settings() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
           <div className="text-6xl mb-4">🤖</div>
-          <p className="text-lg">Loading settings...</p>
+          <p className="text-lg">{t.loadingSettings}</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 p-6">
+    <div className="min-h-screen bg-background p-6">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
           <div className="text-6xl mb-4">⚙️</div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            Settings
+          <h1 className="text-3xl font-bold text-foreground mb-2">
+            {t.settingsTitle}
           </h1>
-          <p className="text-lg text-gray-600">
-            Customize your RoboQuest experience
+          <p className="text-lg text-muted-foreground">
+            {t.customizeExperience}
           </p>
         </div>
 
@@ -160,56 +176,56 @@ export function Settings() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <User className="w-5 h-5" />
-                Account Information
+                {t.accountInformation}
               </CardTitle>
               <CardDescription>
-                Your personal information and account details
+                {t.accountInfoDesc}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="firstName">First Name</Label>
+                  <Label htmlFor="firstName">{t.firstName}</Label>
                   <Input
                     id="firstName"
                     value={formData.firstName}
                     onChange={(e) => handleInputChange('firstName', e.target.value)}
-                    placeholder="Enter your first name"
+                    placeholder={t.enterFirstName}
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="lastName">Last Name</Label>
+                  <Label htmlFor="lastName">{t.lastName}</Label>
                   <Input
                     id="lastName"
                     value={formData.lastName}
                     onChange={(e) => handleInputChange('lastName', e.target.value)}
-                    placeholder="Enter your last name"
+                    placeholder={t.enterLastName}
                   />
                 </div>
               </div>
               
               <div className="space-y-2">
-                <Label htmlFor="email">Email Address</Label>
+                <Label htmlFor="email">{t.email}</Label>
                 <Input
                   id="email"
                   type="email"
                   value={formData.email}
                   onChange={(e) => handleInputChange('email', e.target.value)}
-                  placeholder="Enter your email"
+                  placeholder={t.enterEmail}
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="parentEmail">Parent/Guardian Email</Label>
+                <Label htmlFor="parentEmail">{t.parentEmail}</Label>
                 <Input
                   id="parentEmail"
                   type="email"
                   value={formData.parentEmail}
                   onChange={(e) => handleInputChange('parentEmail', e.target.value)}
-                  placeholder="Parent or guardian email"
+                  placeholder={t.parentGuardianEmail}
                 />
                 <p className="text-sm text-muted-foreground">
-                  Used for progress updates and important notifications
+                  {t.parentEmailDesc}
                 </p>
               </div>
             </CardContent>
@@ -220,47 +236,25 @@ export function Settings() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <SettingsIcon className="w-5 h-5" />
-                Learning Preferences
+                {t.learningPreferences}
               </CardTitle>
               <CardDescription>
-                Customize your learning experience
+                {t.learningPreferencesDesc}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="language">Language</Label>
-                  <Select value={formData.language} onValueChange={(value) => handleInputChange('language', value)}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="en">English</SelectItem>
-                      <SelectItem value="es">Spanish</SelectItem>
-                      <SelectItem value="fr">French</SelectItem>
-                      <SelectItem value="de">German</SelectItem>
-                      <SelectItem value="zh">Chinese</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="dailyGoal">Daily Learning Goal</Label>
-                  <Select 
-                    value={formData.dailyGoal.toString()} 
-                    onValueChange={(value) => handleInputChange('dailyGoal', parseInt(value))}
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="1">1 lesson per day</SelectItem>
-                      <SelectItem value="2">2 lessons per day</SelectItem>
-                      <SelectItem value="3">3 lessons per day</SelectItem>
-                      <SelectItem value="5">5 lessons per day</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+              <div className="space-y-2">
+                <Label htmlFor="language">{t.language}</Label>
+                <Select value={formData.language} onValueChange={(value) => handleInputChange('language', value)}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Object.entries(languageNames).map(([code, name]) => (
+                      <SelectItem key={code} value={code}>{name}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
             </CardContent>
           </Card>
@@ -270,23 +264,23 @@ export function Settings() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Palette className="w-5 h-5" />
-                Appearance
+                {t.appearance}
               </CardTitle>
               <CardDescription>
-                Customize the look and feel of RoboQuest
+                {t.appearanceDesc}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label>Theme</Label>
+                <Label>{t.theme}</Label>
                 <Select value={formData.theme} onValueChange={(value) => handleInputChange('theme', value)}>
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="light">Light Mode</SelectItem>
-                    <SelectItem value="dark">Dark Mode</SelectItem>
-                    <SelectItem value="auto">Auto (Follow System)</SelectItem>
+                    <SelectItem value="light">{t.lightMode}</SelectItem>
+                    <SelectItem value="dark">{t.darkMode}</SelectItem>
+                    <SelectItem value="auto">{t.autoMode}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -298,18 +292,18 @@ export function Settings() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Volume2 className="w-5 h-5" />
-                Audio Settings
+                {t.audioSettings}
               </CardTitle>
               <CardDescription>
-                Control sounds and music in RoboQuest
+                {t.audioSettingsDesc}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <Label htmlFor="soundEffects">Sound Effects</Label>
+                  <Label htmlFor="soundEffects">{t.soundEffects}</Label>
                   <p className="text-sm text-muted-foreground">
-                    Play sounds for button clicks and achievements
+                    {t.soundEffectsDesc}
                   </p>
                 </div>
                 <Switch
@@ -321,9 +315,9 @@ export function Settings() {
 
               <div className="flex items-center justify-between">
                 <div>
-                  <Label htmlFor="backgroundMusic">Background Music</Label>
+                  <Label htmlFor="backgroundMusic">{t.backgroundMusic}</Label>
                   <p className="text-sm text-muted-foreground">
-                    Play ambient music while learning
+                    {t.backgroundMusicDesc}
                   </p>
                 </div>
                 <Switch
@@ -340,18 +334,18 @@ export function Settings() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Bell className="w-5 h-5" />
-                Notifications
+                {t.notifications}
               </CardTitle>
               <CardDescription>
-                Manage your notification preferences
+                {t.notificationsDesc}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <Label htmlFor="notifications">Push Notifications</Label>
+                  <Label htmlFor="notifications">{t.pushNotifications}</Label>
                   <p className="text-sm text-muted-foreground">
-                    Receive notifications for achievements and reminders
+                    {t.pushNotificationsDesc}
                   </p>
                 </div>
                 <Switch
@@ -363,9 +357,9 @@ export function Settings() {
 
               <div className="flex items-center justify-between">
                 <div>
-                  <Label htmlFor="emailUpdates">Email Updates</Label>
+                  <Label htmlFor="emailUpdates">{t.emailUpdates}</Label>
                   <p className="text-sm text-muted-foreground">
-                    Receive progress updates and new course announcements
+                    {t.emailUpdatesDesc}
                   </p>
                 </div>
                 <Switch
@@ -377,9 +371,9 @@ export function Settings() {
 
               <div className="flex items-center justify-between">
                 <div>
-                  <Label htmlFor="parentalNotifications">Parent Notifications</Label>
+                  <Label htmlFor="parentalNotifications">{t.parentNotifications}</Label>
                   <p className="text-sm text-muted-foreground">
-                    Send progress reports to parent/guardian email
+                    {t.parentNotificationsDesc}
                   </p>
                 </div>
                 <Switch
@@ -396,10 +390,10 @@ export function Settings() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Shield className="w-5 h-5" />
-                Privacy & Security
+                {t.privacySecurity}
               </CardTitle>
               <CardDescription>
-                Your data protection and account security
+                {t.privacySecurityDesc}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -407,20 +401,20 @@ export function Settings() {
                 <div className="p-3 bg-blue-50 rounded-lg border border-blue-200">
                   <div className="flex items-center gap-2 text-blue-800 mb-2">
                     <Shield className="w-4 h-4" />
-                    <span className="font-medium">Data Protection</span>
+                    <span className="font-medium">{t.dataProtection}</span>
                   </div>
                   <p className="text-sm text-blue-700">
-                    Your learning data is securely stored and never shared with third parties.
+                    {t.dataProtectionDesc}
                   </p>
                 </div>
                 
                 <div className="p-3 bg-green-50 rounded-lg border border-green-200">
                   <div className="flex items-center gap-2 text-green-800 mb-2">
                     <Check className="w-4 h-4" />
-                    <span className="font-medium">COPPA Compliant</span>
+                    <span className="font-medium">{t.coppaCompliant}</span>
                   </div>
                   <p className="text-sm text-green-700">
-                    RoboQuest follows all children's privacy protection guidelines.
+                    {t.coppaCompliantDesc}
                   </p>
                 </div>
               </div>
@@ -430,19 +424,19 @@ export function Settings() {
           {/* Save Settings */}
           <div className="flex justify-between items-center">
             <Button variant="outline" onClick={signOut} className="text-red-600 hover:text-red-700">
-              Sign Out
+              {t.signOut}
             </Button>
             
             <Button onClick={handleSave} className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600">
               {saved ? (
                 <>
                   <Check className="w-4 h-4 mr-2" />
-                  Saved!
+                  {t.saved}
                 </>
               ) : (
                 <>
                   <Save className="w-4 h-4 mr-2" />
-                  Save Changes
+                  {t.saveChanges}
                 </>
               )}
             </Button>

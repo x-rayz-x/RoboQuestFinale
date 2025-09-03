@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { AuthProvider, useAuth } from './components/AuthProvider';
+import { LanguageProvider } from './i18n/LanguageContext';
 import { LoginForm } from './components/LoginForm';
 import { SignupForm } from './components/SignupForm';
 import { Sidebar } from './components/Sidebar';
@@ -16,9 +17,13 @@ import { OurFounders } from './components/OurFounders';
 import { Button } from './components/ui/button';
 import { LogOut, Upload } from 'lucide-react';
 import { Landing } from './components/Landing';
+import { useTranslation } from './i18n/LanguageContext';
+import { useTheme } from './hooks/useTheme';
 
 function AuthenticatedApp() {
   const { user, signOut, loading, isPasswordRecovery } = useAuth();
+  const { t } = useTranslation();
+  const { applyTheme } = useTheme();
   const [activeSection, setActiveSection] = useState('dashboard');
   const [showUpload, setShowUpload] = useState(false);
 
@@ -41,12 +46,22 @@ function AuthenticatedApp() {
     }
   }, []);
 
+  // Apply user's theme preference when they log in
+  useEffect(() => {
+    if (user) {
+      const userTheme = localStorage.getItem('userTheme');
+      if (userTheme) {
+        applyTheme(userTheme as 'light' | 'dark' | 'auto');
+      }
+    }
+  }, [user, applyTheme]);
+
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50">
+      <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="text-center">
           <div className="text-6xl mb-4">🤖</div>
-          <p className="text-lg">Loading your RoboQuest adventure...</p>
+          <p className="text-lg">{t.loadingAdventure}</p>
         </div>
       </div>
     );
@@ -110,7 +125,7 @@ function AuthenticatedApp() {
               className="bg-white/80 backdrop-blur-sm"
             >
               <Upload className="w-4 h-4 mr-2" />
-              {showUpload ? 'Back' : 'Upload'}
+              {showUpload ? t.back : t.upload}
             </Button>
           )}
           <Button
@@ -120,7 +135,7 @@ function AuthenticatedApp() {
             className="bg-white/80 backdrop-blur-sm text-red-600 hover:text-red-700"
           >
             <LogOut className="w-4 h-4 mr-2" />
-            Sign Out
+            {t.signOut}
           </Button>
         </div>
         
@@ -132,6 +147,15 @@ function AuthenticatedApp() {
 
 function AuthScreen() {
   const [mode, setMode] = useState<'landing'|'login'|'signup'>('landing');
+  const { applyTheme } = useTheme();
+
+  // Apply theme when auth screen loads
+  useEffect(() => {
+    const userTheme = localStorage.getItem('userTheme');
+    if (userTheme) {
+      applyTheme(userTheme as 'light' | 'dark' | 'auto');
+    }
+  }, [applyTheme]);
 
   if (mode === 'landing') {
     return <Landing onLogin={() => setMode('login')} onSignup={() => setMode('signup')} />;
@@ -167,21 +191,33 @@ function AuthScreen() {
 
 export default function App() {
   return (
-    <AuthProvider>
-      <Root />
-    </AuthProvider>
+    <LanguageProvider>
+      <AuthProvider>
+        <Root />
+      </AuthProvider>
+    </LanguageProvider>
   );
 }
 
 function Root() {
   const { user, loading, isPasswordRecovery } = useAuth();
+  const { t } = useTranslation();
+  const { applyTheme } = useTheme();
+
+  // Apply theme when the app loads
+  useEffect(() => {
+    const userTheme = localStorage.getItem('userTheme');
+    if (userTheme) {
+      applyTheme(userTheme as 'light' | 'dark' | 'auto');
+    }
+  }, [applyTheme]);
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50">
+      <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="text-center">
           <div className="text-6xl mb-4">🤖</div>
-          <p className="text-lg">Loading your RoboQuest adventure...</p>
+          <p className="text-lg text-foreground">{t.loadingAdventure}</p>
         </div>
       </div>
     );

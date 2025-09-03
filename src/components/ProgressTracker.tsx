@@ -4,6 +4,7 @@ import { Badge } from './ui/badge';
 import { Progress } from './ui/progress';
 import { useAuth } from './AuthProvider';
 import { useProgress } from '../hooks/useProgress';
+import { useTranslation } from '../i18n/LanguageContext';
 import { 
   TrendingUp, 
   Trophy, 
@@ -21,13 +22,14 @@ import {
 export function ProgressTracker() {
   const { user } = useAuth();
   const { progress, loading, error } = useProgress();
+  const { t } = useTranslation();
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
           <div className="text-6xl mb-4">🤖</div>
-          <p className="text-lg">Loading your progress...</p>
+          <p className="text-lg text-foreground">Loading your progress...</p>
         </div>
       </div>
     );
@@ -35,10 +37,10 @@ export function ProgressTracker() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
           <div className="text-6xl mb-4">❌</div>
-          <p className="text-lg text-red-600">Error loading progress: {error}</p>
+          <p className="text-lg text-red-600 dark:text-red-400">Error loading progress: {error}</p>
         </div>
       </div>
     );
@@ -49,6 +51,7 @@ export function ProgressTracker() {
   const currentXP = progress?.totalXP || 0;
   const coursesCompleted = progress?.coursesCompleted?.length || 0;
   const lessonsCompleted = progress?.lessonsCompleted || 0;
+  const tutorialsCompleted = progress?.completedTutorials?.length || 0;
   const projectsBuilt = progress?.projectsBuilt || 0;
   const dailyGoal = progress?.dailyGoal || 2;
   const dailyProgress = progress?.dailyProgress || 0;
@@ -56,36 +59,36 @@ export function ProgressTracker() {
 
   const stats = [
     {
-      title: 'Current Level',
+      title: t.currentLevel,
       value: currentLevel,
       icon: Trophy,
-      color: 'text-yellow-600',
-      bgColor: 'bg-yellow-100',
+      color: 'text-yellow-600 dark:text-yellow-400',
+      bgColor: 'bg-yellow-100 dark:bg-yellow-950',
       change: '+1 this month'
     },
     {
-      title: 'Total XP',
+      title: t.totalXP,
       value: currentXP,
       icon: Zap,
-      color: 'text-blue-600',
-      bgColor: 'bg-blue-100',
+      color: 'text-blue-600 dark:text-blue-400',
+      bgColor: 'bg-blue-100 dark:bg-blue-950',
       change: '+150 this week'
     },
     {
-      title: 'Courses Completed',
-      value: coursesCompleted,
+      title: t.tutorialsCompleted,
+      value: tutorialsCompleted,
       icon: BookOpen,
-      color: 'text-green-600',
-      bgColor: 'bg-green-100',
-      change: coursesCompleted > 0 ? 'Recently completed' : 'None yet'
+      color: 'text-green-600 dark:text-green-400',
+      bgColor: 'bg-green-100 dark:bg-green-950',
+      change: tutorialsCompleted > 0 ? 'Recently completed' : 'None yet'
     },
     {
-      title: 'Projects Built',
-      value: projectsBuilt,
+      title: t.coursesCompleted,
+      value: coursesCompleted,
       icon: Code,
-      color: 'text-purple-600',
-      bgColor: 'bg-purple-100',
-      change: projectsBuilt > 0 ? 'Keep building!' : 'Start your first'
+      color: 'text-purple-600 dark:text-purple-400',
+      bgColor: 'bg-purple-100 dark:bg-purple-950',
+      change: coursesCompleted > 0 ? 'Keep building!' : 'Start your first'
     }
   ];
 
@@ -100,16 +103,16 @@ export function ProgressTracker() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 p-6">
+    <div className="min-h-screen bg-background p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
           <div className="text-6xl mb-4">📊</div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            Progress Analytics
+          <h1 className="text-3xl font-bold text-foreground mb-2">
+            {t.progressAnalytics}
           </h1>
-          <p className="text-lg text-gray-600">
-            Track your learning journey and celebrate your achievements, {userName}!
+          <p className="text-lg text-muted-foreground">
+            {t.trackLearningJourney}, {userName}!
           </p>
         </div>
 
@@ -142,23 +145,23 @@ export function ProgressTracker() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Target className="w-5 h-5 text-blue-500" />
-                Daily Learning Goal
+                {t.dailyLearningGoal}
               </CardTitle>
               <CardDescription>
-                Track your daily learning progress
+                {t.trackDailyProgress}
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
                 <div className="flex justify-between items-center">
-                  <span className="text-sm font-medium">Today's Progress</span>
-                  <span className="text-sm font-medium">{dailyProgress} / {dailyGoal} lessons</span>
+                  <span className="text-sm font-medium">{t.todaysProgress}</span>
+                  <span className="text-sm font-medium">{dailyProgress} / {dailyGoal} {t.tutorials.toLowerCase()}</span>
                 </div>
                 <Progress value={(dailyProgress / dailyGoal) * 100} className="h-3" />
                 <div className="text-sm text-muted-foreground">
                   {dailyProgress >= dailyGoal 
-                    ? '🎉 Goal achieved! Keep up the great work!' 
-                    : `${dailyGoal - dailyProgress} more lessons to reach your goal`
+                    ? t.goalAchieved 
+                    : `${dailyGoal - dailyProgress} ${t.moreTutorialsToReachGoal}`
                   }
                 </div>
               </div>
@@ -170,10 +173,10 @@ export function ProgressTracker() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Calendar className="w-5 h-5 text-orange-500" />
-                Learning Streak
+                {t.learningStreak}
               </CardTitle>
               <CardDescription>
-                Your consecutive learning days
+                {t.consecutiveLearningDays}
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -182,16 +185,16 @@ export function ProgressTracker() {
                 <div>
                   <p className="text-3xl font-bold text-orange-600">{streakDays}</p>
                   <p className="text-sm text-muted-foreground">
-                    {streakDays === 0 ? 'Start your streak today!' 
-                     : streakDays === 1 ? 'Day streak' 
-                     : 'Days streak'}
+                    {streakDays === 0 ? t.startStreakToday 
+                     : streakDays === 1 ? t.dayStreak 
+                     : t.daysStreak}
                   </p>
                 </div>
               </div>
               <div className="mt-4 text-sm text-muted-foreground">
-                {streakDays >= 7 ? '🏆 Amazing consistency!' 
-                 : streakDays >= 3 ? '🎯 Building momentum!' 
-                 : 'Keep learning daily to build your streak!'}
+                {streakDays >= 7 ? t.amazingConsistency 
+                 : streakDays >= 3 ? t.buildingMomentum 
+                 : t.keepLearningDaily}
               </div>
             </CardContent>
           </Card>
@@ -201,10 +204,10 @@ export function ProgressTracker() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Activity className="w-5 h-5 text-green-500" />
-                Weekly Activity
+                {t.weeklyActivity}
               </CardTitle>
               <CardDescription>
-                Your learning activity this week
+                {t.learningActivityWeek}
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -216,7 +219,7 @@ export function ProgressTracker() {
                       <Progress value={(day.lessons / Math.max(dailyGoal, 1)) * 100} className="h-2" />
                     </div>
                     <span className="text-sm text-muted-foreground w-12">
-                      {day.lessons} lessons
+                      {day.lessons} {t.tutorials.toLowerCase()}
                     </span>
                   </div>
                 ))}
@@ -229,10 +232,10 @@ export function ProgressTracker() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <PieChart className="w-5 h-5 text-purple-500" />
-                Learning Categories
+                {t.learningCategories}
               </CardTitle>
               <CardDescription>
-                Your focus areas
+                {t.focusAreas}
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -277,10 +280,10 @@ export function ProgressTracker() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Award className="w-5 h-5 text-yellow-500" />
-              Recent Achievements
+              {t.recentAchievements}
             </CardTitle>
             <CardDescription>
-              Your latest milestones and accomplishments
+              {t.latestMilestones}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -288,22 +291,22 @@ export function ProgressTracker() {
               <div className="flex items-center gap-3 p-3 bg-yellow-50 rounded-lg border border-yellow-200">
                 <div className="text-2xl">🎯</div>
                 <div>
-                  <div className="font-semibold text-yellow-800">Getting Started</div>
-                  <div className="text-sm text-yellow-600">Completed first lesson</div>
+                  <div className="font-semibold text-yellow-800">{t.gettingStarted}</div>
+                  <div className="text-sm text-yellow-600">{t.completedFirstTutorial}</div>
                 </div>
               </div>
               <div className="flex items-center gap-3 p-3 bg-blue-50 rounded-lg border border-blue-200">
                 <div className="text-2xl">⚡</div>
                 <div>
-                  <div className="font-semibold text-blue-800">XP Collector</div>
-                  <div className="text-sm text-blue-600">Earned 100+ XP</div>
+                  <div className="font-semibold text-blue-800">{t.xpCollector}</div>
+                  <div className="text-sm text-blue-600">{t.earned100XP}</div>
                 </div>
               </div>
               <div className="flex items-center gap-3 p-3 bg-green-50 rounded-lg border border-green-200">
                 <div className="text-2xl">📚</div>
                 <div>
-                  <div className="font-semibold text-green-800">Dedicated Learner</div>
-                  <div className="text-sm text-green-600">5+ lessons completed</div>
+                  <div className="font-semibold text-green-800">{t.dedicatedLearner}</div>
+                  <div className="text-sm text-green-600">{t.tutorialsCompleted5}</div>
                 </div>
               </div>
             </div>

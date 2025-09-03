@@ -43,7 +43,7 @@ export function ProjectCard({ project, isCompleted, onClick }: ProjectCardProps)
             {project.difficulty}
           </Badge>
           <div className="flex items-center gap-2">
-            <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
+            <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950 dark:text-blue-300 dark:border-blue-800">
               {SOURCE_LABELS[project.source]}
             </Badge>
             {isExternalPlatform && (
@@ -62,7 +62,7 @@ export function ProjectCard({ project, isCompleted, onClick }: ProjectCardProps)
       </CardHeader>
       <CardContent>
         {/* Project Preview */}
-        <div className="mb-4 p-4 bg-gradient-to-br from-blue-50 to-purple-50 rounded-lg">
+        <div className="mb-4 p-4 bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-950 dark:to-purple-950 rounded-lg">
           <div className="flex items-center justify-center h-20">
             <div className="text-center">
               <div className="text-3xl mb-2">

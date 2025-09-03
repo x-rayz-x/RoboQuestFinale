@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { FaInstagram, FaYoutube, FaEnvelope } from "react-icons/fa";
 import { Button } from './ui/button';
 import { Input } from './ui/input';
+import { useTranslation } from '../i18n/LanguageContext';
 
 interface LandingProps {
   onLogin: () => void;
@@ -9,6 +10,7 @@ interface LandingProps {
 }
 
 export function Landing({ onLogin, onSignup }: LandingProps) {
+  const { t } = useTranslation();
   const [email, setEmail] = useState('');
   const [submitted, setSubmitted] = useState(false);
   const handleSubmit = (e: React.FormEvent) => {
@@ -26,7 +28,7 @@ export function Landing({ onLogin, onSignup }: LandingProps) {
           <div className="h-8 w-8 rounded bg-white flex items-center justify-center overflow-hidden">
             <img src="/Logo.png" alt="RoboQuest" className="h-8 w-8 object-contain" />
           </div>
-          <span className="text-xl font-medium ml-4">RoboQuest</span>
+          <span className="text-xl font-medium ml-4">{t.roboquest}</span>
         </div>
         
 <div className="flex items-center justify-center space-x-16 mt-4 text-gray-400 text-sm">
@@ -72,14 +74,14 @@ export function Landing({ onLogin, onSignup }: LandingProps) {
             className="bg-black hover:bg-gray-100 border-white/60 text-white hover:bg-white hover:!text-black font-semibold px-5 py-2 rounded-lg shadow-sm"
             aria-label="Log in"
           >
-            Log in
+            {t.login}
           </Button>
           <Button
             onClick={onSignup}
-            className="bg-black hover:bg-gray-100 font-semibold px-5 py-2 rounded-lg border border-black/30 shadow-sm"
+            className="bg-white hover:bg-gray-100 font-semibold px-5 py-2 rounded-lg border border-white/30 shadow-sm"
             aria-label="Sign up"
           >
-            <span className="text-black">Sign up</span>
+            <span className="text-black">{t.signUp}</span>
           </Button>
         </div>
       </nav>
@@ -113,16 +115,16 @@ export function Landing({ onLogin, onSignup }: LandingProps) {
 
           <div className="text-center mb-16">
             <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold mb-6 leading-tight">
-              The Learning OS
+              {t.landingTitle}
               <br />
               <span className="relative">
-                for Young Makers
+                {t.landingSubtitle}
                 <div className="absolute -bottom-2 left-0 right-0 h-1 bg-blue-500 rounded-full" />
               </span>
             </h1>
 
             <p className="text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto mb-12 leading-relaxed">
-              Build, learn, and explore with RoboQuest. Tutorials and projects unified in one simple experience.
+              {t.landingDescription}
             </p>
 
             {/* Waitlist form removed per request */}
@@ -134,22 +136,22 @@ export function Landing({ onLogin, onSignup }: LandingProps) {
               <div className="w-12 h-12 bg-black-500/20 rounded-lg flex items-center justify-center mb-4">
                 <div className="w-6 h-6 bg-black-400 rounded-sm" />
               </div>
-              <h3 className="text-xl font-medium mb-3">Unified Library</h3>
-              <p className="text-gray-400 leading-relaxed">Tutorials, projects, and videos in one place.</p>
+              <h3 className="text-xl font-medium mb-3">{t.unifiedLibrary}</h3>
+              <p className="text-gray-400 leading-relaxed">{t.unifiedLibraryDesc}</p>
             </div>
             <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-8">
               <div className="w-12 h-12 bg-purple-500/20 rounded-lg flex items-center justify-center mb-4">
                 <div className="w-6 h-6 bg-purple-400 rounded-sm" />
               </div>
-              <h3 className="text-xl font-medium mb-3">Progress Tracking</h3>
-              <p className="text-gray-400 leading-relaxed">Earn achievements as you learn new skills.</p>
+              <h3 className="text-xl font-medium mb-3">{t.progressTracking}</h3>
+              <p className="text-gray-400 leading-relaxed">{t.progressTrackingDesc}</p>
             </div>
             <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-8">
               <div className="w-12 h-12 bg-green-500/20 rounded-lg flex items-center justify-center mb-4">
                 <div className="w-6 h-6 bg-green-400 rounded-sm" />
               </div>
-              <h3 className="text-xl font-medium mb-3">Kid-Friendly</h3>
-              <p className="text-gray-400 leading-relaxed">A safe, simple interface for students.</p>
+              <h3 className="text-xl font-medium mb-3">{t.kidFriendly}</h3>
+              <p className="text-gray-400 leading-relaxed">{t.kidFriendlyDesc}</p>
             </div>
           </div>
 
@@ -158,15 +160,15 @@ export function Landing({ onLogin, onSignup }: LandingProps) {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
               <div>
                 <div className="text-4xl font-bold text-black-400 mb-2">100+</div>
-                <div className="text-gray-400">Tutorials</div>
+                <div className="text-gray-400">{t.tutorials}</div>
               </div>
               <div>
                 <div className="text-4xl font-bold text-blue-400 mb-2">99.9%</div>
-                <div className="text-gray-400">Uptime</div>
+                <div className="text-gray-400">{t.uptime}</div>
               </div>
               <div>
                 <div className="text-4xl font-bold text-blue-400 mb-2">24/7</div>
-                <div className="text-gray-400">Access Anywhere</div>
+                <div className="text-gray-400">{t.accessAnywhere}</div>
               </div>
             </div>
           </div>
@@ -201,9 +203,9 @@ export function Landing({ onLogin, onSignup }: LandingProps) {
             <div className="h-9 w-9 rounded bg-white flex items-center justify-center overflow-hidden">
               <img src="/Logo.png" alt="RoboQuest" className="h-7 w-7 object-contain" />
             </div>
-            <span className="text-xl font-medium ml-4">RoboQuest</span>
+            <span className="text-xl font-medium ml-4">{t.roboquest}</span>
           </div>
-          <div className="text-gray-400 text-sm">© {new Date().getFullYear()} RoboQuest. All rights reserved.</div>
+          <div className="text-gray-400 text-sm">© {new Date().getFullYear()} {t.roboquest}. {t.allRightsReserved}</div>
         </div>
       </footer>
     </div>

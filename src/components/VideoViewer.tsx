@@ -165,9 +165,9 @@ export function VideoViewer({ videoId, onBack, isOurContent = false }: VideoView
   }
 
   const difficultyColors = {
-    beginner: 'bg-green-100 text-green-800',
-    intermediate: 'bg-yellow-100 text-yellow-800',
-    advanced: 'bg-red-100 text-red-800'
+    beginner: 'bg-green-100 text-green-800 dark:bg-green-950 dark:text-green-200',
+    intermediate: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-950 dark:text-yellow-200',
+    advanced: 'bg-red-100 text-red-800 dark:bg-red-950 dark:text-red-200'
   };
 
   const categoryEmojis: { [key: string]: string } = {
@@ -183,7 +183,7 @@ export function VideoViewer({ videoId, onBack, isOurContent = false }: VideoView
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 p-6">
+    <div className="min-h-screen bg-background p-6">
       <div className="max-w-6xl mx-auto">
         <Button onClick={onBack} variant="outline" className="mb-6">
           <ArrowLeft className="w-4 h-4 mr-2" />
@@ -250,15 +250,15 @@ export function VideoViewer({ videoId, onBack, isOurContent = false }: VideoView
                 {completed ? (
                   <div className="text-center">
                     <CheckCircle className="w-12 h-12 mx-auto mb-3 text-green-500" />
-                    <p className="font-medium text-green-800 mb-2">Completed!</p>
-                    <p className="text-sm text-green-600">
+                    <p className="font-medium text-green-800 dark:text-green-200 mb-2">Completed!</p>
+                    <p className="text-sm text-green-600 dark:text-green-300">
                       You've earned {video.xpReward} XP
                     </p>
                   </div>
                 ) : (
                   <div className="text-center">
                     <Play className="w-12 h-12 mx-auto mb-3 text-blue-500" />
-                    <p className="font-medium mb-3">Watch and Learn</p>
+                    <p className="font-medium text-foreground mb-3">Watch and Learn</p>
                     <Button 
                       onClick={handleCompleteVideo}
                       disabled={completing}

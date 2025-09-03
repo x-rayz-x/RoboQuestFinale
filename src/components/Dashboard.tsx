@@ -34,10 +34,10 @@ export function Dashboard({ onNavigate }: DashboardProps) {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
           <div className="text-6xl mb-4">🤖</div>
-          <p className="text-lg">Loading your progress...</p>
+          <p className="text-lg text-foreground">Loading your progress...</p>
         </div>
       </div>
     );
@@ -155,13 +155,13 @@ export function Dashboard({ onNavigate }: DashboardProps) {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 p-6">
+    <div className="min-h-screen bg-background p-6">
       <div className="max-w-7xl mx-auto">
         {/* Offline/Online Status */}
         {isOffline && (
-          <Alert className="mb-6 border-orange-200 bg-orange-50">
-            <WifiOff className="h-4 w-4 text-orange-600" />
-            <AlertDescription className="text-orange-800">
+          <Alert className="mb-6 border-orange-200 bg-orange-50 dark:border-orange-800 dark:bg-orange-950">
+            <WifiOff className="h-4 w-4 text-orange-600 dark:text-orange-400" />
+            <AlertDescription className="text-orange-800 dark:text-orange-200">
               <strong>Offline Mode:</strong> Some features may be limited. Your progress will sync when connection is restored.
             </AlertDescription>
           </Alert>
@@ -169,8 +169,8 @@ export function Dashboard({ onNavigate }: DashboardProps) {
 
         {/* Error Alert */}
         {error && !isOffline && (
-          <Alert className="mb-6 border-red-200 bg-red-50">
-            <AlertDescription className="text-red-800">
+          <Alert className="mb-6 border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-950">
+            <AlertDescription className="text-red-800 dark:text-red-200">
               <strong>Connection Issue:</strong> {error}
             </AlertDescription>
           </Alert>
@@ -181,10 +181,10 @@ export function Dashboard({ onNavigate }: DashboardProps) {
           <div className="flex items-center gap-3 mb-4">
             <div className="text-5xl">🤖</div>
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">
+              <h1 className="text-3xl font-bold text-foreground">
                 Welcome back, {userName}! 🚀
               </h1>
-              <p className="text-lg text-gray-600">
+              <p className="text-lg text-muted-foreground">
                 Ready to continue your coding adventure?
               </p>
             </div>
@@ -317,18 +317,18 @@ export function Dashboard({ onNavigate }: DashboardProps) {
                     key={achievement.id}
                     className={`flex items-center gap-3 p-3 rounded-lg transition-colors ${
                       achievement.earned
-                        ? 'bg-yellow-50 border-yellow-200 border'
-                        : 'bg-gray-50 opacity-60'
+                        ? 'bg-yellow-50 border-yellow-200 border dark:bg-yellow-950 dark:border-yellow-800'
+                        : 'bg-gray-50 opacity-60 dark:bg-muted'
                     }`}
                   >
                     <div className={`text-2xl ${achievement.earned ? '' : 'grayscale'}`}>
                       {achievement.earned ? achievement.icon : '🔒'}
                     </div>
                     <div className="flex-1">
-                      <div className={`font-semibold ${achievement.earned ? 'text-yellow-800' : 'text-gray-600'}`}>
+                      <div className={`font-semibold ${achievement.earned ? 'text-yellow-800 dark:text-yellow-200' : 'text-gray-600 dark:text-muted-foreground'}`}>
                         {achievement.title}
                       </div>
-                      <div className={`text-sm ${achievement.earned ? 'text-yellow-600' : 'text-gray-500'}`}>
+                      <div className={`text-sm ${achievement.earned ? 'text-yellow-600 dark:text-yellow-300' : 'text-gray-500 dark:text-muted-foreground'}`}>
                         {achievement.description}
                       </div>
                     </div>

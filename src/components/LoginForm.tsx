@@ -7,7 +7,7 @@ import { Alert, AlertDescription } from './ui/alert';
 import { useAuth } from './AuthProvider';
 import { Eye, EyeOff, ArrowLeft, Mail, Lock, CheckCircle } from 'lucide-react';
 import logoImage from '/public/Transparent Logo.png';
-import loginBackgroundImage from '/public/Login.jpg';
+import loginBackgroundImage from '/public/Gradient.jpg';
 
 interface LoginFormProps {
   onToggleMode: () => void;

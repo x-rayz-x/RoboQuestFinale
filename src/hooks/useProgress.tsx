@@ -208,6 +208,28 @@ export function useProgress() {
     });
   };
 
+  const updateDailyGoal = async (newGoal: number) => {
+    return await updateProgress({
+      dailyGoal: newGoal
+    });
+  };
+
+  const completeTutorial = async (tutorialId: string, xpGained: number = 50) => {
+    if (!progress) return;
+
+    const newTotalXP = progress.totalXP + xpGained;
+    const newLevel = Math.floor(newTotalXP / 200) + 1; // Level up every 200 XP
+    const newCompletedTutorials = [...(progress.completedTutorials || []), tutorialId];
+    
+    return await updateProgress({
+      totalXP: newTotalXP,
+      level: newLevel,
+      lessonsCompleted: progress.lessonsCompleted + 1,
+      dailyProgress: progress.dailyProgress + 1,
+      completedTutorials: newCompletedTutorials
+    });
+  };
+
   useEffect(() => {
     if (user) {
       fetchUserData();
@@ -230,6 +252,8 @@ export function useProgress() {
     updateProgress,
     completeLesson,
     completeProject,
+    completeTutorial,
+    updateDailyGoal,
     unlockAchievement,
     refetch: fetchUserData
   };

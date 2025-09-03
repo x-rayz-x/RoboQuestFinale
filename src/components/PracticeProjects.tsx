@@ -536,15 +536,15 @@ export function PracticeProjects() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 p-6">
+    <div className="min-h-screen bg-background p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
           <div className="text-6xl mb-4">💻</div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+          <h1 className="text-3xl font-bold text-foreground mb-2">
             Practice Projects
           </h1>
-          <p className="text-lg text-gray-600">
+          <p className="text-lg text-muted-foreground">
             {projects.length} hands-on coding projects to improve your skills
           </p>
         </div>
@@ -610,7 +610,7 @@ export function PracticeProjects() {
         {loading && (
           <div className="text-center py-12">
             <div className="text-6xl mb-4">🤖</div>
-            <p className="text-lg">Loading projects...</p>
+            <p className="text-lg text-foreground">Loading projects...</p>
           </div>
         )}
 
@@ -618,7 +618,7 @@ export function PracticeProjects() {
         {error && (
           <div className="text-center py-12">
             <div className="text-6xl mb-4">❌</div>
-            <p className="text-lg text-red-600">Failed to load projects: {error}</p>
+            <p className="text-lg text-red-600 dark:text-red-400">Failed to load projects: {error}</p>
             <Button onClick={() => setProjects(getLocalProjects())} className="mt-4">
               Try Again
             </Button>

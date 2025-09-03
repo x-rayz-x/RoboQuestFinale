@@ -156,10 +156,10 @@ export function HelpResources() {
   ];
 
   return (
-    <div className="p-6 space-y-6 bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 min-h-full">
+    <div className="p-6 space-y-6 bg-background min-h-full">
       {/* Header */}
-      <div className="bg-white rounded-xl p-6 shadow-sm border">
-        <h1 className="text-3xl mb-2">Help & Resources 🤝</h1>
+      <div className="bg-card rounded-xl p-6 shadow-sm border">
+        <h1 className="text-3xl mb-2 text-foreground">Help & Resources 🤝</h1>
         <p className="text-muted-foreground">Get the help you need and discover amazing resources to boost your learning!</p>
       </div>
 
@@ -197,7 +197,7 @@ export function HelpResources() {
                   </div>
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
-                      <h4 className="text-sm">{item.title}</h4>
+                      <h4 className="text-sm text-foreground">{item.title}</h4>
                       <Badge variant="secondary" className="text-xs">{item.category}</Badge>
                     </div>
                     <p className="text-xs text-muted-foreground mb-2">{item.description}</p>
@@ -239,7 +239,7 @@ export function HelpResources() {
                     </div>
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-1">
-                        <h4 className="text-sm">{tutorial.title}</h4>
+                        <h4 className="text-sm text-foreground">{tutorial.title}</h4>
                         <Badge variant="outline" className="text-xs">{tutorial.difficulty}</Badge>
                       </div>
                       <p className="text-xs text-muted-foreground mb-1">{tutorial.description}</p>
@@ -280,7 +280,7 @@ export function HelpResources() {
                         {resource.icon}
                       </div>
                       <div className="flex-1">
-                        <h4 className="text-sm mb-1">{resource.title}</h4>
+                        <h4 className="text-sm mb-1 text-foreground">{resource.title}</h4>
                         <p className="text-xs text-muted-foreground mb-2">{resource.description}</p>
                         <div className="flex items-center gap-4 text-xs text-muted-foreground">
                           <span>{resource.members} members</span>

@@ -9,7 +9,8 @@ import { Label } from './ui/label';
 import { Textarea } from './ui/textarea';
 import { VideoViewer } from './VideoViewer';
 import { useAuth } from './AuthProvider';
-import { Search, Play, Clock, Trophy, Filter, Edit, Trash2, AlertTriangle } from 'lucide-react';
+import { useProgress } from '../hooks/useProgress';
+import { Search, Play, Clock, Trophy, Filter, Edit, Trash2, AlertTriangle, CheckCircle } from 'lucide-react';
 import { projectId, publicAnonKey } from '../utils/supabase/info';
 
 interface Tutorial {
@@ -29,6 +30,7 @@ interface Tutorial {
 
 export function TutorialsLibrary() {
   const { user, session, refreshSession } = useAuth();
+  const { progress, completeTutorial } = useProgress();
   const [tutorials, setTutorials] = useState<Tutorial[]>([]);
   const [filteredTutorials, setFilteredTutorials] = useState<Tutorial[]>([]);
   const [loading, setLoading] = useState(true);
@@ -137,6 +139,30 @@ export function TutorialsLibrary() {
 
   const handleBackToLibrary = () => {
     setSelectedTutorial(null);
+  };
+
+  const handleCompleteTutorial = async (tutorial: Tutorial, e: React.MouseEvent) => {
+    e.stopPropagation();
+    
+    if (!completeTutorial || !progress) return;
+    
+    try {
+      const isCompleted = progress.completedTutorials?.includes(tutorial.id);
+      if (isCompleted) {
+        setSuccess('Tutorial already completed!');
+        return;
+      }
+
+      await completeTutorial(tutorial.id, tutorial.xpReward);
+      setSuccess(`Tutorial completed! +${tutorial.xpReward} XP earned!`);
+      
+      // Clear success message after 3 seconds
+      setTimeout(() => setSuccess(''), 3000);
+    } catch (err) {
+      console.error('Error completing tutorial:', err);
+      setError('Failed to mark tutorial as completed');
+      setTimeout(() => setError(''), 3000);
+    }
   };
 
   const handleEditClick = (tutorial: Tutorial, e: React.MouseEvent) => {
@@ -323,9 +349,9 @@ export function TutorialsLibrary() {
   }
 
   const difficultyColors = {
-    beginner: 'bg-green-100 text-green-800',
-    intermediate: 'bg-yellow-100 text-yellow-800',
-    advanced: 'bg-red-100 text-red-800'
+    beginner: 'bg-green-100 text-green-800 dark:bg-green-950 dark:text-green-200',
+    intermediate: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-950 dark:text-yellow-200',
+    advanced: 'bg-red-100 text-red-800 dark:bg-red-950 dark:text-red-200'
   };
 
   const categoryEmojis = {
@@ -341,15 +367,15 @@ export function TutorialsLibrary() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 p-6">
+    <div className="min-h-screen bg-background p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
           <div className="text-6xl mb-4">📺</div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+          <h1 className="text-3xl font-bold text-foreground mb-2">
             Video Tutorials
           </h1>
-          <p className="text-lg text-gray-600">
+          <p className="text-lg text-muted-foreground">
             Learn coding and technology through engaging YouTube videos
           </p>
           
@@ -464,27 +490,47 @@ export function TutorialsLibrary() {
                   className="hover:shadow-lg transition-shadow cursor-pointer group relative"
                   onClick={() => handleTutorialClick(tutorial.id)}
                 >
-                  {/* Admin Actions */}
-                  {isAdmin && (
-                    <div className="absolute top-2 right-2 z-10 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                  {/* Action Buttons */}
+                  <div className="absolute top-2 right-2 z-10 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    {/* Completion Button for all users */}
+                    {user && (
                       <Button
                         size="sm"
                         variant="outline"
-                        className="h-8 w-8 p-0 bg-white/90 backdrop-blur-sm"
-                        onClick={(e) => handleEditClick(tutorial, e)}
+                        className={`h-8 w-8 p-0 bg-white/90 backdrop-blur-sm ${
+                          progress?.completedTutorials?.includes(tutorial.id) 
+                            ? 'text-green-600 bg-green-50' 
+                            : 'text-blue-600 hover:text-blue-700'
+                        }`}
+                        onClick={(e) => handleCompleteTutorial(tutorial, e)}
+                        title={progress?.completedTutorials?.includes(tutorial.id) ? 'Completed!' : 'Mark as completed'}
                       >
-                        <Edit className="w-3 h-3" />
+                        <CheckCircle className="w-3 h-3" />
                       </Button>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="h-8 w-8 p-0 bg-white/90 backdrop-blur-sm text-red-600 hover:text-red-700"
-                        onClick={(e) => handleDeleteClick(tutorial, e)}
-                      >
-                        <Trash2 className="w-3 h-3" />
-                      </Button>
-                    </div>
-                  )}
+                    )}
+                    
+                    {/* Admin Actions */}
+                    {isAdmin && (
+                      <>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="h-8 w-8 p-0 bg-white/90 backdrop-blur-sm"
+                          onClick={(e) => handleEditClick(tutorial, e)}
+                        >
+                          <Edit className="w-3 h-3" />
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="h-8 w-8 p-0 bg-white/90 backdrop-blur-sm text-red-600 hover:text-red-700"
+                          onClick={(e) => handleDeleteClick(tutorial, e)}
+                        >
+                          <Trash2 className="w-3 h-3" />
+                        </Button>
+                      </>
+                    )}
+                  </div>
 
                   <CardHeader className="pb-3">
                     <div className="flex justify-between items-start mb-2">

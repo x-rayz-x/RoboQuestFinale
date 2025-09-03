@@ -1,7 +1,7 @@
 export const DIFFICULTY_COLORS = {
-  beginner: 'bg-green-100 text-green-800',
-  intermediate: 'bg-yellow-100 text-yellow-800',
-  advanced: 'bg-red-100 text-red-800'
+  beginner: 'bg-green-100 text-green-800 dark:bg-green-950 dark:text-green-200',
+  intermediate: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-950 dark:text-yellow-200',
+  advanced: 'bg-red-100 text-red-800 dark:bg-red-950 dark:text-red-200'
 } as const;
 
 export const CATEGORY_EMOJIS = {

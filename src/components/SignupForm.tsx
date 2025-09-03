@@ -73,7 +73,7 @@ export function SignupForm({ onToggleMode }: SignupFormProps) {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-background p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <div className="text-6xl mb-4">🚀</div>
@@ -85,14 +85,14 @@ export function SignupForm({ onToggleMode }: SignupFormProps) {
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             {error && (
-              <div className="flex items-center gap-2 text-sm text-red-600 bg-red-50 p-3 rounded-lg">
+              <div className="flex items-center gap-2 text-sm text-red-600 bg-red-50 dark:text-red-400 dark:bg-red-950 p-3 rounded-lg">
                 <AlertCircle className="w-4 h-4" />
                 {error}
               </div>
             )}
             
             {success && (
-              <div className="flex items-center gap-2 text-sm text-green-600 bg-green-50 p-3 rounded-lg">
+              <div className="flex items-center gap-2 text-sm text-green-600 bg-green-50 dark:text-green-400 dark:bg-green-950 p-3 rounded-lg">
                 <CheckCircle className="w-4 h-4" />
                 {success}
               </div>

@@ -13,6 +13,7 @@ import {
   Users
 } from 'lucide-react';
 import logoImage from '/public/Transparent Logo.png';
+import { useTranslation } from '../i18n/LanguageContext';
 
 interface SidebarProps {
   activeSection: string;
@@ -21,60 +22,62 @@ interface SidebarProps {
 }
 
 export function Sidebar({ activeSection, onSectionChange, isAdmin = false }: SidebarProps) {
+  const { t } = useTranslation();
+  
   const menuItems = [
     {
       id: 'dashboard',
-      label: 'Dashboard',
+      label: t.dashboard,
       icon: Home,
-      description: 'Overview & quick actions'
+      description: t.overviewQuickActions
     },
     // Courses removed from navigation per product decision
     {
       id: 'tutorials',
-      label: 'Tutorials',
+      label: t.tutorials,
       icon: Video,
-      description: 'YouTube video library'
+      description: t.youtubeVideoLibrary
     },
     {
       id: 'practice',
-      label: 'Practice',
+      label: t.practice,
       icon: Code,
-      description: 'Hands-on exercises'
+      description: t.handsOnExercises
     },
     {
       id: 'progress',
-      label: 'Progress',
+      label: t.progress,
       icon: TrendingUp,
-      description: 'Analytics & stats'
+      description: t.analyticsStats
     },
     {
       id: 'achievements',
-      label: 'Achievements',
+      label: t.achievements,
       icon: Award,
-      description: 'Badges & certificates'
+      description: t.badgesCertificates
     },
     {
       id: 'our-projects',
       label: 'Our Projects',
       icon: FolderOpen,
-      description: 'RoboQuest channel content'
+      description: t.roboquestChannelContent
     },
     {
       id: 'founders',
       label: 'Our Founders',
       icon: Users,
-      description: 'Meet the team behind RoboQuest'
+      description: t.meetTheTeam
     },
     {
       id: 'settings',
-      label: 'Settings',
+      label: t.settings,
       icon: Settings,
-      description: 'Account preferences'
+      description: t.accountPreferences
     }
   ];
 
   return (
-    <div className="w-64 bg-white border-r border-border h-full flex flex-col">
+    <div className="w-64 bg-sidebar border-r border-border h-full flex flex-col">
       {/* Logo/Header */}
       <div className="p-6 border-b border-border">
         <div className="flex items-center gap-3">
@@ -84,9 +87,9 @@ export function Sidebar({ activeSection, onSectionChange, isAdmin = false }: Sid
             className="w-10 h-10 object-contain"
           />
           <div>
-            <h1 className="font-bold text-lg">RoboQuest</h1>
-            <p className="text-xs text-muted-foreground">
-              {isAdmin ? 'Admin Dashboard' : 'Learning Platform'}
+            <h1 className="font-bold text-lg text-sidebar-foreground">{t.roboquest}</h1>
+            <p className="text-xs text-sidebar-accent-foreground">
+              {isAdmin ? t.adminDashboard : t.learningPlatform}
             </p>
           </div>
         </div>
@@ -129,12 +132,12 @@ export function Sidebar({ activeSection, onSectionChange, isAdmin = false }: Sid
       <div className="p-4 border-t border-border">
         <div className="text-center">
           <div className="text-2xl mb-2">🚀</div>
-          <p className="text-xs text-muted-foreground">
-            Keep learning and building amazing things!
+          <p className="text-xs text-sidebar-accent-foreground">
+            {t.keepLearning}
           </p>
           {isAdmin && (
-            <p className="text-xs text-blue-600 mt-1 font-medium">
-              Admin Mode Active
+            <p className="text-xs text-blue-400 mt-1 font-medium">
+              {t.adminModeActive}
             </p>
           )}
         </div>

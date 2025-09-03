@@ -1,5 +1,14 @@
 @custom-variant dark (&:is(.dark *));
 
+/* Theme initialization */
+:root {
+  color-scheme: light;
+}
+
+.dark {
+  color-scheme: dark;
+}
+
 :root {
   --font-size: 14px;
   --background: #ffffff;
@@ -42,24 +51,26 @@
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
+  --background: oklch(0.08 0 0);
   --foreground: oklch(0.985 0 0);
-  --card: oklch(0.145 0 0);
+  --card: oklch(0.12 0 0);
   --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.145 0 0);
+  --popover: oklch(0.12 0 0);
   --popover-foreground: oklch(0.985 0 0);
   --primary: oklch(0.985 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
+  --primary-foreground: oklch(0.08 0 0);
+  --secondary: oklch(0.18 0 0);
   --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
+  --muted: oklch(0.18 0 0);
   --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
+  --accent: oklch(0.18 0 0);
   --accent-foreground: oklch(0.985 0 0);
   --destructive: oklch(0.396 0.141 25.723);
   --destructive-foreground: oklch(0.637 0.237 25.331);
-  --border: oklch(0.269 0 0);
-  --input: oklch(0.269 0 0);
+  --border: oklch(0.18 0 0);
+  --input: oklch(0.18 0 0);
+  --input-background: oklch(0.12 0 0);
+  --switch-background: oklch(0.3 0 0);
   --ring: oklch(0.439 0 0);
   --font-weight-medium: 500;
   --font-weight-normal: 400;
@@ -68,14 +79,173 @@
   --chart-3: oklch(0.769 0.188 70.08);
   --chart-4: oklch(0.627 0.265 303.9);
   --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.205 0 0);
+  --sidebar: oklch(0.08 0 0);
   --sidebar-foreground: oklch(0.985 0 0);
   --sidebar-primary: oklch(0.488 0.243 264.376);
   --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent: oklch(0.18 0 0);
   --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(0.269 0 0);
+  --sidebar-border: oklch(0.18 0 0);
   --sidebar-ring: oklch(0.439 0 0);
+}
+
+/* Additional dark mode styles for better coverage */
+.dark * {
+  border-color: hsl(var(--border));
+}
+
+.dark input, .dark textarea, .dark select {
+  background-color: hsl(var(--input-background));
+  color: hsl(var(--foreground));
+}
+
+.dark .bg-white {
+  background-color: hsl(var(--card));
+}
+
+.dark .text-black {
+  color: hsl(var(--foreground));
+}
+
+.dark .border-gray-200 {
+  border-color: hsl(var(--border));
+}
+
+.dark .bg-gray-50, .dark .bg-gray-100 {
+  background-color: hsl(var(--muted));
+}
+
+.dark .text-gray-600, .dark .text-gray-700 {
+  color: hsl(var(--muted-foreground));
+}
+
+/* Additional component-specific dark mode styles */
+.dark .bg-gradient-to-br {
+  background: linear-gradient(to bottom right, hsl(var(--background)), hsl(var(--muted)));
+}
+
+.dark .bg-gradient-to-r {
+  background: linear-gradient(to right, hsl(var(--background)), hsl(var(--muted)));
+}
+
+.dark .bg-gradient-to-l {
+  background: linear-gradient(to left, hsl(var(--background)), hsl(var(--muted)));
+}
+
+.dark .bg-gradient-to-t {
+  background: linear-gradient(to top, hsl(var(--background)), hsl(var(--muted)));
+}
+
+.dark .bg-gradient-to-b {
+  background: linear-gradient(to bottom, hsl(var(--background)), hsl(var(--muted)));
+}
+
+/* Ensure all text colors are properly set in dark mode */
+.dark .text-gray-900 {
+  color: hsl(var(--foreground));
+}
+
+.dark .text-gray-800 {
+  color: hsl(var(--foreground));
+}
+
+.dark .text-gray-500 {
+  color: hsl(var(--muted-foreground));
+}
+
+.dark .text-gray-400 {
+  color: hsl(var(--muted-foreground));
+}
+
+.dark .text-gray-300 {
+  color: hsl(var(--muted-foreground));
+}
+
+.dark .text-gray-200 {
+  color: hsl(var(--muted-foreground));
+}
+
+.dark .text-gray-100 {
+  color: hsl(var(--foreground));
+}
+
+/* Ensure all background colors are properly set in dark mode */
+.dark .bg-gray-900 {
+  background-color: hsl(var(--background));
+}
+
+.dark .bg-gray-800 {
+  background-color: hsl(var(--card));
+}
+
+.dark .bg-gray-700 {
+  background-color: hsl(var(--muted));
+}
+
+.dark .bg-gray-600 {
+  background-color: hsl(var(--muted));
+}
+
+.dark .bg-gray-500 {
+  background-color: hsl(var(--muted));
+}
+
+.dark .bg-gray-400 {
+  background-color: hsl(var(--muted));
+}
+
+.dark .bg-gray-300 {
+  background-color: hsl(var(--muted));
+}
+
+.dark .bg-gray-200 {
+  background-color: hsl(var(--muted));
+}
+
+.dark .bg-gray-100 {
+  background-color: hsl(var(--muted));
+}
+
+.dark .bg-gray-50 {
+  background-color: hsl(var(--muted));
+}
+
+/* Ensure body and html elements get proper dark mode styling */
+.dark body {
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+}
+
+.dark html {
+  background-color: hsl(var(--background));
+}
+
+/* Ensure all form elements are properly styled in dark mode */
+.dark input[type="text"],
+.dark input[type="email"],
+.dark input[type="password"],
+.dark input[type="number"],
+.dark input[type="search"],
+.dark input[type="tel"],
+.dark input[type="url"],
+.dark textarea,
+.dark select {
+  background-color: hsl(var(--input-background));
+  color: hsl(var(--foreground));
+  border-color: hsl(var(--border));
+}
+
+.dark input[type="text"]:focus,
+.dark input[type="email"]:focus,
+.dark input[type="password"]:focus,
+.dark input[type="number"]:focus,
+.dark input[type="search"]:focus,
+.dark input[type="tel"]:focus,
+.dark input[type="url"]:focus,
+.dark textarea:focus,
+.dark select:focus {
+  border-color: hsl(var(--ring));
+  box-shadow: 0 0 0 2px hsl(var(--ring) / 0.2);
 }
 
 @theme inline {

@@ -106,7 +106,7 @@ export function VideoUpload({ onUploadComplete }: { onUploadComplete?: () => voi
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 p-6">
+    <div className="min-h-screen bg-background p-6">
       <div className="max-w-2xl mx-auto">
         <Card>
           <CardHeader>
@@ -121,14 +121,14 @@ export function VideoUpload({ onUploadComplete }: { onUploadComplete?: () => voi
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
               {error && (
-                <div className="flex items-center gap-2 text-sm text-red-600 bg-red-50 p-3 rounded-lg">
+                <div className="flex items-center gap-2 text-sm text-red-600 bg-red-50 dark:text-red-400 dark:bg-red-950 p-3 rounded-lg">
                   <AlertCircle className="w-4 h-4" />
                   {error}
                 </div>
               )}
               
               {success && (
-                <div className="flex items-center gap-2 text-sm text-green-600 bg-green-50 p-3 rounded-lg">
+                <div className="flex items-center gap-2 text-sm text-green-600 bg-green-50 dark:text-green-400 dark:bg-green-950 p-3 rounded-lg">
                   <CheckCircle className="w-4 h-4" />
                   {success}
                 </div>

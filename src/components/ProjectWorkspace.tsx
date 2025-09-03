@@ -214,11 +214,11 @@ export function ProjectWorkspace({ projectId, onBack }: ProjectWorkspaceProps) {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 p-6">
+      <div className="min-h-screen bg-background p-6">
         <div className="max-w-7xl mx-auto">
           <div className="text-center py-12">
             <div className="text-6xl mb-4">🤖</div>
-            <p className="text-lg">Loading project workspace...</p>
+            <p className="text-lg text-foreground">Loading project workspace...</p>
           </div>
         </div>
       </div>
@@ -227,7 +227,7 @@ export function ProjectWorkspace({ projectId, onBack }: ProjectWorkspaceProps) {
 
   if (error || !project) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 p-6">
+      <div className="min-h-screen bg-background p-6">
         <div className="max-w-7xl mx-auto">
           <Button onClick={onBack} variant="outline" className="mb-6">
             <ArrowLeft className="w-4 h-4 mr-2" />
@@ -235,7 +235,7 @@ export function ProjectWorkspace({ projectId, onBack }: ProjectWorkspaceProps) {
           </Button>
           <div className="text-center py-12">
             <div className="text-6xl mb-4">❌</div>
-            <p className="text-lg text-red-600">Project not found or failed to load</p>
+            <p className="text-lg text-red-600 dark:text-red-400">Project not found or failed to load</p>
           </div>
         </div>
       </div>
@@ -243,9 +243,9 @@ export function ProjectWorkspace({ projectId, onBack }: ProjectWorkspaceProps) {
   }
 
   const difficultyColors = {
-    beginner: 'bg-green-100 text-green-800',
-    intermediate: 'bg-yellow-100 text-yellow-800',
-    advanced: 'bg-red-100 text-red-800'
+    beginner: 'bg-green-100 text-green-800 dark:bg-green-950 dark:text-green-200',
+    intermediate: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-950 dark:text-yellow-200',
+    advanced: 'bg-red-100 text-red-800 dark:bg-red-950 dark:text-red-200'
   };
 
   const projectProgress = getProjectProgress();
@@ -253,7 +253,7 @@ export function ProjectWorkspace({ projectId, onBack }: ProjectWorkspaceProps) {
   const alreadyCompleted = isAlreadyCompleted();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 p-6">
+    <div className="min-h-screen bg-background p-6">
       <div className="max-w-7xl mx-auto">
         <Button onClick={onBack} variant="outline" className="mb-6">
           <ArrowLeft className="w-4 h-4 mr-2" />
@@ -292,7 +292,7 @@ export function ProjectWorkspace({ projectId, onBack }: ProjectWorkspaceProps) {
                   </div>
                   <div className="flex justify-between items-center text-sm">
                     <span>XP Reward:</span>
-                    <span className="font-medium text-yellow-600">
+                    <span className="font-medium text-yellow-600 dark:text-yellow-400">
                       <Trophy className="w-4 h-4 inline mr-1" />
                       {project.xpReward} XP
                     </span>
@@ -355,10 +355,10 @@ export function ProjectWorkspace({ projectId, onBack }: ProjectWorkspaceProps) {
                         key={index}
                         className={`p-3 rounded-lg border transition-all ${
                           isCompleted 
-                            ? 'bg-green-50 border-green-200' 
+                            ? 'bg-green-50 border-green-200 dark:bg-green-950 dark:border-green-800' 
                             : isCurrent 
-                            ? 'bg-blue-50 border-blue-300' 
-                            : 'bg-gray-50 border-gray-200'
+                            ? 'bg-blue-50 border-blue-300 dark:bg-blue-950 dark:border-blue-800' 
+                            : 'bg-gray-50 border-gray-200 dark:bg-muted dark:border-border'
                         }`}
                       >
                         <div className="flex items-start gap-2">
@@ -367,7 +367,7 @@ export function ProjectWorkspace({ projectId, onBack }: ProjectWorkspaceProps) {
                               ? 'bg-green-500 text-white' 
                               : isCurrent 
                               ? 'bg-blue-500 text-white' 
-                              : 'bg-gray-300 text-gray-600'
+                              : 'bg-gray-300 text-gray-600 dark:bg-gray-600 dark:text-gray-300'
                           }`}>
                             {isCompleted ? (
                               <CheckCircle className="w-4 h-4" />
@@ -437,7 +437,7 @@ export function ProjectWorkspace({ projectId, onBack }: ProjectWorkspaceProps) {
                     <Textarea
                       value={userCode}
                       onChange={(e) => setUserCode(e.target.value)}
-                      className="font-mono text-sm min-h-64 bg-gray-50"
+                      className="font-mono text-sm min-h-64 bg-gray-50 dark:bg-muted"
                       placeholder="Write your code here..."
                     />
                   </CardContent>
