@@ -29,7 +29,8 @@ interface OurProject {
 }
 
 export function OurProjects() {
-  const { user, session } = useAuth();
+  const { user, session: authSession, refreshSession } = useAuth();
+  const session = authSession;
   const [projects, setProjects] = useState<OurProject[]>([]);
   const [filteredProjects, setFilteredProjects] = useState<OurProject[]>([]);
   const [loading, setLoading] = useState(true);
@@ -189,11 +190,21 @@ export function OurProjects() {
   };
 
   const handleConfirmDelete = async () => {
-    if (!editingProject || !session?.access_token) return;
+    if (!editingProject) return;
 
     try {
       setDeleting(true);
       setDeleteError(''); // Clear any previous delete errors
+      let session = authSession;
+      if (!session?.access_token) {
+        const refreshedSession = await refreshSession();
+        session = refreshedSession.session;
+      }
+
+      if (!session?.access_token) {
+        throw new Error('Your session has expired. Please sign in again.');
+      }
+
       const response = await fetch(
         `https://${projectId}.supabase.co/functions/v1/make-server-4b9cf438/content/${editingProject.id}`,
         {
@@ -206,11 +217,11 @@ export function OurProjects() {
       );
 
       if (!response.ok) {
-        throw new Error('Failed to delete project');
+        const errorData = await response.json().catch(() => null);
+        throw new Error(errorData?.error || `Failed to delete project (${response.status})`);
       }
 
-      // Refresh projects list
-      await fetchOurProjects();
+      setProjects((currentProjects) => currentProjects.filter((project) => project.id !== editingProject.id));
       setShowDeleteDialog(false);
       setEditingProject(null);
       setDeleteError(''); // Clear error on success
