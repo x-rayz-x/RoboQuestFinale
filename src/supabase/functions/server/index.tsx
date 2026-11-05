@@ -379,6 +379,11 @@ async function initializeYouTubeTutorials() {
 
 // Initialize "Our Projects" section
 async function initializeOurProjects() {
+  const existingContentIndex = await kv.get('our_content:index')
+  if (existingContentIndex !== undefined) {
+    return
+  }
+
   const ourProjects = [
     {
       id: 'our_project_1',
@@ -420,12 +425,7 @@ async function initializeOurProjects() {
     }
   }
 
-  // Update our content index
-  const ourContentIndex = await kv.get('our_content:index') || []
-  const newIds = ourProjects.map(p => p.id).filter(id => !ourContentIndex.includes(id))
-  if (newIds.length > 0) {
-    await kv.set('our_content:index', [...ourContentIndex, ...newIds])
-  }
+  await kv.set('our_content:index', ourProjects.map(project => project.id))
 }
 
 // Initialize structured courses with CodeDX integration
