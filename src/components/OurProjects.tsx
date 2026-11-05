@@ -218,6 +218,13 @@ export function OurProjects() {
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => null);
+        if (response.status === 404) {
+          setProjects((currentProjects) => currentProjects.filter((project) => project.id !== editingProject.id));
+          setShowDeleteDialog(false);
+          setEditingProject(null);
+          setDeleteError('');
+          return;
+        }
         throw new Error(errorData?.error || `Failed to delete project (${response.status})`);
       }
 

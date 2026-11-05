@@ -1065,32 +1065,16 @@ app.delete('/make-server-4b9cf438/content/:id', async (c) => {
     
     const contentId = c.req.param('id')
     
-    // Try to find the content in both regular and our content stores
-    let existingContent = await kv.get(`content:${contentId}`)
-    let isOurContent = false
-    let storeKey = `content:${contentId}`
-    let indexKey = 'content:index'
-    
-    if (!existingContent) {
-      existingContent = await kv.get(`our_content:${contentId}`)
-      if (existingContent) {
-        isOurContent = true
-        storeKey = `our_content:${contentId}`
-        indexKey = 'our_content:index'
+    await kv.del(`content:${contentId}`)
+    await kv.del(`our_content:${contentId}`)
+
+    for (const indexKey of ['content:index', 'our_content:index']) {
+      const contentIndex = await kv.get(indexKey) || []
+      const updatedIndex = contentIndex.filter((id: string) => id !== contentId)
+      if (updatedIndex.length !== contentIndex.length) {
+        await kv.set(indexKey, updatedIndex)
       }
     }
-    
-    if (!existingContent) {
-      return c.json({ error: 'Content not found' }, 404)
-    }
-    
-    // Remove from storage
-    await kv.del(storeKey)
-    
-    // Remove from index
-    const contentIndex = await kv.get(indexKey) || []
-    const updatedIndex = contentIndex.filter((id: string) => id !== contentId)
-    await kv.set(indexKey, updatedIndex)
     
     return c.json({ message: 'Content deleted successfully' })
     
