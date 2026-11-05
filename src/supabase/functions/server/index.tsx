@@ -53,34 +53,20 @@ async function initializeBuckets() {
     }
   }
 
-  // Clear existing tutorials and initialize new ones
-  await clearExistingTutorials()
+  // Seed the default tutorials only when the content index has not been created.
   await initializeYouTubeTutorials()
   await initializeCourses()
   await initializePracticeProjects()
   await initializeOurProjects()
 }
 
-// Clear existing tutorials before adding new ones
-async function clearExistingTutorials() {
-  try {
-    const existingContentIndex = await kv.get('content:index') || []
-    
-    // Remove old tutorial content
-    for (const oldId of existingContentIndex) {
-      if (oldId.startsWith('tutorial_')) {
-        await kv.set(`content:${oldId}`, null) // Set to null to effectively remove
-      }
-    }
-    
-    console.log('Cleared existing tutorials')
-  } catch (error) {
-    console.log('Error clearing tutorials:', error)
-  }
-}
-
 // Initialize YouTube tutorials with the EXACT list requested
 async function initializeYouTubeTutorials() {
+  const existingContentIndex = await kv.get('content:index')
+  if (existingContentIndex !== undefined) {
+    return
+  }
+
   const youtubeTutorials = [
     // Arduino Video Tutorials for Kids (6 videos)
     {
@@ -383,25 +369,12 @@ async function initializeYouTubeTutorials() {
     }
   ]
 
-  // Clear existing tutorials and replace with new ones
-  const existingContentIndex = await kv.get('content:index') || []
-  
-  // Remove old tutorial content
-  for (const oldId of existingContentIndex) {
-    if (oldId.startsWith('tutorial_')) {
-      await kv.set(`content:${oldId}`, null) // Set to null to effectively remove
-    }
-  }
-  
-  // Store new tutorials
   for (const tutorial of youtubeTutorials) {
     await kv.set(`content:${tutorial.id}`, tutorial)
   }
 
-  // Update content index with only new tutorial IDs
   const newTutorialIds = youtubeTutorials.map(t => t.id)
-  const otherContentIds = existingContentIndex.filter(id => !id.startsWith('tutorial_'))
-  await kv.set('content:index', [...otherContentIds, ...newTutorialIds])
+  await kv.set('content:index', newTutorialIds)
 }
 
 // Initialize "Our Projects" section
@@ -1112,7 +1085,7 @@ app.delete('/make-server-4b9cf438/content/:id', async (c) => {
     }
     
     // Remove from storage
-    await kv.set(storeKey, null) // Set to null to effectively remove
+    await kv.del(storeKey)
     
     // Remove from index
     const contentIndex = await kv.get(indexKey) || []
