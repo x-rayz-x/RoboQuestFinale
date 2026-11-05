@@ -4,7 +4,6 @@ import { Badge } from './ui/badge';
 import { Button } from './ui/button';
 import { Mail, Phone, MessageCircle, ExternalLink } from 'lucide-react';
 import rayaanImage from '/public/Rayaan.jpg';
-import harsithImage from '/public/harsith.png';
 
 export function OurFounders() {
   const founders = [
@@ -14,14 +13,6 @@ export function OurFounders() {
       email: 'rayaanm5409@gmail.com',
       phone: '+91 84249 33585',
       role: 'Primary Founder & Developer',
-      description: ''
-    },
-    {
-      name: 'Harsith',
-      image: harsithImage,
-      email: 'harsithrajan08@gmail.com',
-      phone: '+91 91373 76422',
-      role: 'Primary Associate',
       description: ''
     }
   ];
@@ -56,7 +47,7 @@ export function OurFounders() {
         </Card>
 
         {/* Founders Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+        <div className="grid grid-cols-1 gap-8 mb-12 max-w-2xl mx-auto">
           {founders.map((founder) => (
             <Card key={founder.name} className="hover:shadow-xl transition-all duration-300 border-2 hover:border-blue-300 dark:hover:border-blue-600">
               <CardHeader className="text-center pb-4">
