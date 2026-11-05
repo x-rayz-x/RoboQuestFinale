@@ -379,53 +379,18 @@ async function initializeYouTubeTutorials() {
 
 // Initialize "Our Projects" section
 async function initializeOurProjects() {
-  const existingContentIndex = await kv.get('our_content:index')
-  if (existingContentIndex !== undefined) {
-    return
+  const removedProjectIds = ['our_project_1', 'our_project_2']
+  for (const projectId of removedProjectIds) {
+    await kv.del(`our_content:${projectId}`)
   }
 
-  const ourProjects = [
-    {
-      id: 'our_project_1',
-      title: 'RoboQuest Tutorial: Getting Started',
-      description: 'Welcome to RoboQuest! Learn how to navigate our platform and start your coding journey.',
-      youtubeId: '5hYFX2mDNAY',
-      type: 'video',
-      category: 'general',
-      difficulty: 'beginner',
-      duration: '10 min',
-      xpReward: 30,
-      views: 0,
-      likes: 0,
-      uploadedAt: new Date().toISOString(),
-      isOurContent: true
-    },
-    {
-      id: 'our_project_2',
-      title: 'RoboQuest: Building Your First Project',
-      description: 'Follow along as we build an amazing project together. Step-by-step guidance from our team.',
-      youtubeId: 'x7X9w_GIm1s',
-      type: 'video',
-      category: 'general',
-      difficulty: 'intermediate',
-      duration: '15 min',
-      xpReward: 50,
-      views: 0,
-      likes: 0,
-      uploadedAt: new Date().toISOString(),
-      isOurContent: true
-    }
-  ]
-
-  // Store our projects
-  for (const project of ourProjects) {
-    const existing = await kv.get(`our_content:${project.id}`)
-    if (!existing) {
-      await kv.set(`our_content:${project.id}`, project)
-    }
+  const existingContentIndex = await kv.get('our_content:index') || []
+  const remainingContentIndex = existingContentIndex.filter(
+    (projectId: string) => !removedProjectIds.includes(projectId)
+  )
+  if (remainingContentIndex.length !== existingContentIndex.length) {
+    await kv.set('our_content:index', remainingContentIndex)
   }
-
-  await kv.set('our_content:index', ourProjects.map(project => project.id))
 }
 
 // Initialize structured courses with CodeDX integration
