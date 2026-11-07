@@ -11,7 +11,11 @@ interface AuthContextType {
   session: Session | null;
   loading: boolean;
   signIn: (email: string, password: string) => Promise<void>;
-  signUp: (email: string, password: string, userData: any) => Promise<void>;
+  signUp: (
+    email: string,
+    password: string,
+    userData: any
+  ) => Promise<{ requiresEmailConfirmation: boolean }>;
   signOut: () => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
   updatePassword: (newPassword: string) => Promise<void>;
@@ -123,8 +127,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         throw new Error(signupError.message);
       }
 
+      if (!signupData.session) {
+        return { requiresEmailConfirmation: true };
+      }
+
       // Attempt immediate sign-in so user enters the app right away
-      const { data: signinData, error: signinError } = await supabase.auth.signInWithPassword({
+      const { error: signinError } = await supabase.auth.signInWithPassword({
         email,
         password
       });
@@ -134,7 +142,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         throw new Error(signinError.message || 'Please verify your email to complete signup.');
       }
 
-      return signinData ?? signupData;
+      return { requiresEmailConfirmation: false };
     } catch (error) {
       console.log('Sign up error:', error);
       throw error;

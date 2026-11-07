@@ -82,14 +82,18 @@ export function SignupForm({ onToggleMode }: SignupFormProps) {
 
     try {
       // Update the signUp call to match the expected parameters
-      await signUp(formData.email, formData.password, {
+      const { requiresEmailConfirmation } = await signUp(formData.email, formData.password, {
         firstName: formData.firstName,
         lastName: formData.lastName,
         birthDate: formData.birthDate,
         parentEmail: isAdult ? '' : formData.parentEmail
       });
       
-      setSuccess('Account created successfully! Welcome to RoboQuest!');
+      setSuccess(
+        requiresEmailConfirmation
+          ? 'Check your email for the Supabase confirmation link to finish signing up.'
+          : 'Account created successfully! Welcome to RoboQuest!'
+      );
     } catch (err: any) {
       console.log('Signup error:', err);
       setError(err.message || 'Registration failed. Please try again.');
