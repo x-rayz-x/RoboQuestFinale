@@ -226,6 +226,9 @@ export function SignupForm({ onToggleMode }: SignupFormProps) {
                   required
                 />
               </div>
+              <p className="text-xs text-muted-foreground">
+                <strong>Combined with your name, your date of birth is Protected Health Information (PHI) under HIPAA.</strong>
+              </p>
             </div>
 
             {!isAdult && (
