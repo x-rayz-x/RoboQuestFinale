@@ -29,6 +29,8 @@ export function Settings() {
   const { language, setLanguage, t } = useTranslation();
   const { applyTheme } = useTheme();
   const [saved, setSaved] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState('');
   const [formData, setFormData] = useState({
     firstName: (user as any)?.user_metadata?.firstName || '',
     lastName: (user as any)?.user_metadata?.lastName || '',
@@ -95,10 +97,21 @@ export function Settings() {
 
   const handleSave = async () => {
     try {
-      const accessToken = session?.access_token;
+      setSaving(true);
+      setSaved(false);
+      setSaveError('');
+
+      let accessToken = session?.access_token;
+      if (!accessToken) {
+        const refreshedSession = await refreshSession();
+        accessToken = refreshedSession.session?.access_token;
+      }
+      if (!accessToken) {
+        throw new Error('Your session has expired. Please sign in again.');
+      }
+
       const base = `https://${projectId}.supabase.co/functions/v1/make-server-4b9cf438`;
-      if (accessToken) {
-        await fetch(`${base}/user/profile`, {
+      const profileResponse = await fetch(`${base}/user/profile`, {
           method: 'PUT',
           headers: {
             'Authorization': `Bearer ${accessToken}`,
@@ -111,7 +124,12 @@ export function Settings() {
           })
         });
 
-        await fetch(`${base}/user/settings`, {
+        if (!profileResponse.ok) {
+          const responseBody = await profileResponse.json().catch(() => null);
+          throw new Error(responseBody?.error || 'Failed to save your profile.');
+        }
+
+        const settingsResponse = await fetch(`${base}/user/settings`, {
           method: 'PUT',
           headers: {
             'Authorization': `Bearer ${accessToken}`,
@@ -128,6 +146,11 @@ export function Settings() {
           })
         });
 
+        if (!settingsResponse.ok) {
+          const responseBody = await settingsResponse.json().catch(() => null);
+          throw new Error(responseBody?.error || 'Failed to save your settings.');
+        }
+
         // Apply theme immediately after saving
         if (formData.theme) {
           applyTheme(formData.theme as 'light' | 'dark' | 'auto');
@@ -136,9 +159,12 @@ export function Settings() {
         // Refresh auth to reflect new user metadata and refetch settings/progress
         await refreshSession();
         await refetch();
-      }
     } catch (e) {
       console.error('Failed to save settings', e);
+      setSaveError(e instanceof Error ? e.message : 'Failed to save settings. Please try again.');
+      return;
+    } finally {
+      setSaving(false);
     }
 
     setSaved(true);
@@ -427,19 +453,30 @@ export function Settings() {
               {t.signOut}
             </Button>
             
-            <Button onClick={handleSave} className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600">
-              {saved ? (
-                <>
-                  <Check className="w-4 h-4 mr-2" />
-                  {t.saved}
-                </>
-              ) : (
-                <>
-                  <Save className="w-4 h-4 mr-2" />
-                  {t.saveChanges}
-                </>
+            <div className="text-right">
+              {saveError && (
+                <p role="alert" className="mb-2 text-sm text-red-600">
+                  {saveError}
+                </p>
               )}
-            </Button>
+              <Button
+                onClick={handleSave}
+                disabled={saving}
+                className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600"
+              >
+                {saved ? (
+                  <>
+                    <Check className="w-4 h-4 mr-2" />
+                    {t.saved}
+                  </>
+                ) : (
+                  <>
+                    <Save className="w-4 h-4 mr-2" />
+                    {saving ? 'Saving...' : t.saveChanges}
+                  </>
+                )}
+              </Button>
+            </div>
           </div>
         </div>
       </div>
