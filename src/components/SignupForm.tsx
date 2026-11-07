@@ -10,6 +10,22 @@ interface SignupFormProps {
   onToggleMode: () => void;
 }
 
+const isAtLeast18 = (birthDate: string) => {
+  if (!birthDate) return false;
+
+  const dateOfBirth = new Date(`${birthDate}T00:00:00`);
+  if (Number.isNaN(dateOfBirth.getTime())) return false;
+
+  const today = new Date();
+  let age = today.getFullYear() - dateOfBirth.getFullYear();
+  const birthdayHasPassed =
+    today.getMonth() > dateOfBirth.getMonth() ||
+    (today.getMonth() === dateOfBirth.getMonth() && today.getDate() >= dateOfBirth.getDate());
+
+  if (!birthdayHasPassed) age -= 1;
+  return age >= 18;
+};
+
 export function SignupForm({ onToggleMode }: SignupFormProps) {
   const [formData, setFormData] = useState({
     firstName: '',
@@ -30,6 +46,16 @@ export function SignupForm({ onToggleMode }: SignupFormProps) {
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
+
+  const handleBirthDateChange = (birthDate: string) => {
+    setFormData(prev => ({
+      ...prev,
+      birthDate,
+      parentEmail: isAtLeast18(birthDate) ? '' : prev.parentEmail
+    }));
+  };
+
+  const isAdult = isAtLeast18(formData.birthDate);
 
   const validateForm = () => {
     if (formData.password !== formData.confirmPassword) {
@@ -60,7 +86,7 @@ export function SignupForm({ onToggleMode }: SignupFormProps) {
         firstName: formData.firstName,
         lastName: formData.lastName,
         birthDate: formData.birthDate,
-        parentEmail: formData.parentEmail
+        parentEmail: isAdult ? '' : formData.parentEmail
       });
       
       setSuccess('Account created successfully! Welcome to RoboQuest!');
@@ -191,31 +217,33 @@ export function SignupForm({ onToggleMode }: SignupFormProps) {
                   id="birthDate"
                   type="date"
                   value={formData.birthDate}
-                  onChange={(e) => handleInputChange('birthDate', e.target.value)}
+                  onChange={(e) => handleBirthDateChange(e.target.value)}
                   className="pl-10"
                   required
                 />
               </div>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="parentEmail">Parent/Guardian Email</Label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
-                <Input
-                  id="parentEmail"
-                  type="email"
-                  placeholder="Parent or guardian email"
-                  value={formData.parentEmail}
-                  onChange={(e) => handleInputChange('parentEmail', e.target.value)}
-                  className="pl-10"
-                  required
-                />
+            {!isAdult && (
+              <div className="space-y-2">
+                <Label htmlFor="parentEmail">Parent/Guardian Email</Label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+                  <Input
+                    id="parentEmail"
+                    type="email"
+                    placeholder="Parent or guardian email"
+                    value={formData.parentEmail}
+                    onChange={(e) => handleInputChange('parentEmail', e.target.value)}
+                    className="pl-10"
+                    required
+                  />
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  We'll send progress updates to your parent or guardian
+                </p>
               </div>
-              <p className="text-xs text-muted-foreground">
-                We'll send progress updates to your parent or guardian
-              </p>
-            </div>
+            )}
 
             <Button
               type="submit"
