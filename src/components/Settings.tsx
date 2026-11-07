@@ -24,7 +24,7 @@ import {
 } from 'lucide-react';
 
 export function Settings() {
-  const { user, session, signOut, refreshSession } = useAuth();
+  const { user, session, signOut, refreshSession, updateProfile } = useAuth();
   const { progress, settings, loading, error, refetch } = useProgress();
   const { language, setLanguage, t } = useTranslation();
   const { applyTheme } = useTheme();
@@ -111,54 +111,42 @@ export function Settings() {
       }
 
       const base = `https://${projectId}.supabase.co/functions/v1/make-server-4b9cf438`;
-      const profileResponse = await fetch(`${base}/user/profile`, {
-          method: 'PUT',
-          headers: {
-            'Authorization': `Bearer ${accessToken}`,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            firstName: formData.firstName,
-            lastName: formData.lastName,
-            parentEmail: formData.parentEmail
-          })
-        });
+      await updateProfile({
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        parentEmail: formData.parentEmail
+      });
 
-        if (!profileResponse.ok) {
-          const responseBody = await profileResponse.json().catch(() => null);
-          throw new Error(responseBody?.error || 'Failed to save your profile.');
-        }
+      const settingsResponse = await fetch(`${base}/user/settings`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          language: formData.language,
+          theme: formData.theme,
+          soundEffects: formData.soundEffects,
+          backgroundMusic: formData.backgroundMusic,
+          notifications: formData.notifications,
+          emailUpdates: formData.emailUpdates,
+          parentalNotifications: formData.parentalNotifications
+        })
+      });
 
-        const settingsResponse = await fetch(`${base}/user/settings`, {
-          method: 'PUT',
-          headers: {
-            'Authorization': `Bearer ${accessToken}`,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            language: formData.language,
-            theme: formData.theme,
-            soundEffects: formData.soundEffects,
-            backgroundMusic: formData.backgroundMusic,
-            notifications: formData.notifications,
-            emailUpdates: formData.emailUpdates,
-            parentalNotifications: formData.parentalNotifications
-          })
-        });
+      if (!settingsResponse.ok) {
+        const responseBody = await settingsResponse.json().catch(() => null);
+        throw new Error(responseBody?.error || 'Failed to save your settings.');
+      }
 
-        if (!settingsResponse.ok) {
-          const responseBody = await settingsResponse.json().catch(() => null);
-          throw new Error(responseBody?.error || 'Failed to save your settings.');
-        }
+      // Apply theme immediately after saving
+      if (formData.theme) {
+        applyTheme(formData.theme as 'light' | 'dark' | 'auto');
+      }
 
-        // Apply theme immediately after saving
-        if (formData.theme) {
-          applyTheme(formData.theme as 'light' | 'dark' | 'auto');
-        }
-        
-        // Refresh auth to reflect new user metadata and refetch settings/progress
-        await refreshSession();
-        await refetch();
+      // Refresh auth to reflect new user metadata and refetch settings/progress
+      await refreshSession();
+      await refetch();
     } catch (e) {
       console.error('Failed to save settings', e);
       setSaveError(e instanceof Error ? e.message : 'Failed to save settings. Please try again.');

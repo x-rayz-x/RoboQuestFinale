@@ -16,6 +16,7 @@ interface AuthContextType {
     password: string,
     userData: any
   ) => Promise<{ requiresEmailConfirmation: boolean }>;
+  updateProfile: (profile: { firstName: string; lastName: string; parentEmail: string }) => Promise<void>;
   signOut: () => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
   updatePassword: (newPassword: string) => Promise<void>;
@@ -149,6 +150,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const updateProfile = async (profile: { firstName: string; lastName: string; parentEmail: string }) => {
+    try {
+      const { data, error } = await supabase.auth.updateUser({ data: profile });
+      if (error) {
+        throw new Error(error.message);
+      }
+      if (!data.user) {
+        throw new Error('Supabase did not return the updated profile.');
+      }
+
+      setUser(data.user);
+      setSession((currentSession: Session | null) =>
+        currentSession ? { ...currentSession, user: data.user } : currentSession
+      );
+    } catch (error) {
+      console.error('Profile update error:', error);
+      throw error;
+    }
+  };
+
   const signOut = async () => {
     try {
       console.log('Signing out...');
@@ -220,6 +241,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     loading,
     signIn,
     signUp,
+    updateProfile,
     signOut,
     resetPassword,
     updatePassword,
