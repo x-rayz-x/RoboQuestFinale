@@ -1,5 +1,5 @@
 
-# RoboQuest - Escape tutorial hell
+# RoboQuest - Escape Infinite Tutorials
 🌍 Live Site: mrroboquest.vercel.app
 
 📚 Helping the next generation of coders one project at a time.
