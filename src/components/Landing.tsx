@@ -78,10 +78,10 @@ export function Landing({ onLogin, onSignup }: LandingProps) {
           </Button>
           <Button
             onClick={onSignup}
-            className="bg-white hover:bg-gray-100 font-semibold px-5 py-2 rounded-lg border border-white/30 shadow-sm"
+            className="bg-black text-white hover:bg-gray-800 hover:text-white font-semibold px-5 py-2 rounded-lg border border-white/60 shadow-sm"
             aria-label="Sign up"
           >
-            <span className="text-black">{t.signUp}</span>
+            <span className="text-white">{t.signUp}</span>
           </Button>
         </div>
       </nav>
@@ -213,5 +213,4 @@ export function Landing({ onLogin, onSignup }: LandingProps) {
 }
 
 // Removed multi-video showcase per request
-
 
