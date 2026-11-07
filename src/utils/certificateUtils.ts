@@ -1,4 +1,4 @@
-import { PDFDocument, PDFFont, rgb, StandardFonts } from 'pdf-lib';
+import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
 
 interface Achievement {
   id: string;
@@ -67,13 +67,12 @@ export async function downloadCertificate(achievement: Achievement, userName: st
     const font = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
     
     // Add user's name in the center of the certificate
-    const fontSize = 24;
     const text = userName;
+    const fontSize = Math.min(24, (width * 0.7) / font.widthOfTextAtSize(text, 1));
     const textWidth = font.widthOfTextAtSize(text, fontSize);
     
-    // Calculate center position (adjust these values based on your certificate layout)
     const centerX = (width - textWidth) / 2;
-    const centerY = height / 2 + 20; // Adjust Y position as needed
+    const centerY = height / 2 + 40;
     
     // Add the user's name
     firstPage.drawText(text, {
@@ -86,11 +85,11 @@ export async function downloadCertificate(achievement: Achievement, userName: st
     
     // Add achievement title below the name
     const titleFont = await pdfDoc.embedFont(StandardFonts.Helvetica);
-    const titleFontSize = 16;
     const titleText = achievement.title;
+    const titleFontSize = Math.min(16, (width * 0.75) / titleFont.widthOfTextAtSize(titleText, 1));
     const titleWidth = titleFont.widthOfTextAtSize(titleText, titleFontSize);
     const titleX = (width - titleWidth) / 2;
-    const titleY = centerY - 40;
+    const titleY = centerY - 34;
     
     firstPage.drawText(titleText, {
       x: titleX,
@@ -104,14 +103,15 @@ export async function downloadCertificate(achievement: Achievement, userName: st
     if (achievement.earnedDate) {
       const dateFont = await pdfDoc.embedFont(StandardFonts.Helvetica);
       const dateText = `Completed: ${achievement.earnedDate}`;
-      const dateWidth = dateFont.widthOfTextAtSize(dateText, 12);
+      const dateFontSize = 12;
+      const dateWidth = dateFont.widthOfTextAtSize(dateText, dateFontSize);
       const dateX = (width - dateWidth) / 2;
-      const dateY = titleY - 30;
+      const dateY = titleY - 22;
       
       firstPage.drawText(dateText, {
         x: dateX,
         y: dateY,
-        size: 12,
+        size: dateFontSize,
         font: dateFont,
         color: rgb(0.5, 0.5, 0.5),
       });
