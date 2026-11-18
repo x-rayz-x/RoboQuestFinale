@@ -91,7 +91,7 @@ export function SignupForm({ onToggleMode }: SignupFormProps) {
       
       setSuccess(
         requiresEmailConfirmation
-          ? 'Check your email for the Supabase confirmation link to finish signing up.'
+          ? 'Check your email for the Supabase confirmation link to finish signing up. Make sure to check your junk/spam folders!'
           : 'Account created successfully! Welcome to RoboQuest!'
       );
     } catch (err: any) {
