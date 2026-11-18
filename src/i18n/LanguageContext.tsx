@@ -27,12 +27,14 @@ export function LanguageProvider({ children }: LanguageProviderProps) {
       setLanguageState(lang);
       localStorage.setItem('roboquest-language', lang);
       document.documentElement.lang = lang;
+      document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
     }
   };
 
-  // Set initial document language
+  // Set the document language and text direction on initial load and changes.
   useEffect(() => {
     document.documentElement.lang = language;
+    document.documentElement.dir = language === 'ar' ? 'rtl' : 'ltr';
   }, [language]);
 
   const value: LanguageContextType = {
