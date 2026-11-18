@@ -227,7 +227,18 @@ export function SignupForm({ onToggleMode }: SignupFormProps) {
                 />
               </div>
               <p className="text-xs text-muted-foreground">
-                <strong>Combined with your name, your date of birth is Protected Health Information (PHI) under HIPAA.</strong>
+                <strong>
+                  Combined with your name, your date of birth is Protected Health Information (PHI) under{' '}
+                  <a
+                    href="https://www.hhs.gov/hipaa/for-professionals/privacy/index.html"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="underline underline-offset-2 hover:text-foreground"
+                  >
+                    HIPAA
+                  </a>
+                  .
+                </strong>
               </p>
             </div>
 
