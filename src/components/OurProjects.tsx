@@ -289,7 +289,7 @@ export function OurProjects() {
             <Youtube className="w-6 h-6" />
           </Button>
           <p className="text-sm text-muted-foreground mt-2">
-            Visit our YouTube channel for more content!
+            Stay tuned for more projects and videos on our YouTube channel!
           </p>
         </div>
 

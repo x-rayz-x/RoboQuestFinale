@@ -233,7 +233,7 @@ export function SignupForm({ onToggleMode }: SignupFormProps) {
                     href="https://www.hhs.gov/hipaa/for-professionals/privacy/index.html"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="underline underline-offset-2 hover:text-foreground"
+                    className="underline decoration-1 underline-offset-2 hover:text-foreground"
                   >
                     HIPAA
                   </a>
